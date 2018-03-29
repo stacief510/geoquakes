@@ -4,6 +4,7 @@ var weekly_quakes_endpoint = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/s
 $(document).ready(function() {
     console.log("Let's get coding!");
 
+   
     var map;
 
     function initMap() {
@@ -20,42 +21,37 @@ $(document).ready(function() {
 
 
     // CODE IN HERE!
-    function timeConverter(timestamp) {
-        var a = new Date(timestamp * 1000);
-        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        var month = months[a.getMonth()];
-        var date = a.getDate();
-        var hour = a.getHours();
-        var min = a.getMinutes();
-        var sec = a.getSeconds();
-        var time = month + ' ' + date + ' ' + hour + ':' + min + ':' + sec;
-        return time;
-    }
+   
+        //date.now() - quake time then divide (3600x1000) = date
 
-    var earthquakeData = []
+
+    var earthquakeData = [] 
     $.ajax({
         method: "GET",
         url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson",
         success: function(json) {
             var allQuakeInfo = json.features;
+            
+             let timeNow = Date.now();
+
             allQuakeInfo.forEach(function(response) {
                 var mag = response.properties.mag;
                 var place = response.properties.place;
                 var timestamp = response.properties.time;
                 var coordinates = response.geometry.coordinates;
                 var myLatLng = {lat: coordinates[1], lng: coordinates[0]};
-                var finalTime = timeConverter(timestamp);
-                $('#info').append(`<p> M - ${mag} - ${place} at ${finalTime}</p>`);
+                debugger;
+                $('#info').append(`<p> M - ${mag} - ${place} / ${((timeNow-timestamp)/1000/3600).toFixed(2)} hours ago </p>`);
 
 			    var marker = new google.maps.Marker({
 			        position: myLatLng,
 			        map: map
-			    });
-
-            })
-        },
-    })
-
+                });
+                
+               
+        });
+    },
+  });
 
 
 
